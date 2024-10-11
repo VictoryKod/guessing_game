@@ -291,52 +291,57 @@
         "Paul Westerberg"
     ];
 
-    // Копируем исходные списки для использования в игре
+    // Переменные для игры
     let groups = [...initialGroups];
     let vocalists = [...initialVocalists];
+    let correctAnswer = null;
+    let correctCount = 0;
+    let incorrectCount = 0;
+    let answered = false; // Флаг для отслеживания ответа
 
-    let currentGroupIndex;
-    let correctAnswerIndex;
-    let currentVocalist;
-    let score = 0;
-    let questionsAsked = 0;
-
+    // Функция для запуска новой игры
     function startQuiz() {
-        score = 0;
-        questionsAsked = 0;
+        correctCount = 0;
+        incorrectCount = 0;
         groups = [...initialGroups];
         vocalists = [...initialVocalists];
+        document.getElementById("resultModal").style.display = "none";
+        document.getElementById("feedbackModal").style.display = "none";
         askQuestion();
     }
 
+    // Функция для задания вопроса
     function askQuestion() {
         if (groups.length === 0) {
             endQuiz();
             return;
         }
 
-        currentGroupIndex = Math.floor(Math.random() * groups.length);
-        const currentGroup = groups[currentGroupIndex];
-        currentVocalist = vocalists[currentGroupIndex];
+        const groupIndex = Math.floor(Math.random() * groups.length);
+        const currentGroup = groups[groupIndex];
+        correctAnswer = vocalists[groupIndex];
+        answered = false; // Сбрасываем флаг ответа
 
+        // Устанавливаем текст вопроса
         document.getElementById("group-name").textContent = currentGroup;
 
+        // Случайное размещение правильного ответа среди вариантов
         correctAnswerIndex = Math.floor(Math.random() * 4);
         const answers = [];
 
         // Получаем все возможные неправильные ответы
-        const wrongAnswers = vocalists.filter(v => v !== currentVocalist);
+        const wrongAnswers = vocalists.filter(v => v !== correctAnswer);
         shuffleArray(wrongAnswers);
 
         for (let i = 0; i < 4; i++) {
             if (i === correctAnswerIndex) {
-                answers.push(currentVocalist);
+                answers.push(correctAnswer);
             } else {
                 if (wrongAnswers.length > 0) {
                     answers.push(wrongAnswers.pop());
                 } else {
-                    // Если недостаточно неправильных ответов, повторяем текущий вокалист
-                    answers.push(currentVocalist);
+                    // Если недостаточно неправильных ответов, повторяем правильный
+                    answers.push(correctAnswer);
                 }
             }
         }
@@ -347,35 +352,37 @@
         }
 
         // Удаляем использованную группу и вокалиста из списков
-        groups.splice(currentGroupIndex, 1);
-        vocalists.splice(currentGroupIndex, 1);
-
-        questionsAsked++;
+        groups.splice(groupIndex, 1);
+        vocalists.splice(groupIndex, 1);
     }
 
+    // Функция для проверки ответа
     function checkAnswer(selectedIndex) {
-        if (selectedIndex === correctAnswerIndex) {
-            score++;
-            showFeedback(true);
+        if (answered) return; // Не разрешаем повторные ответы
+        answered = true; // Отмечаем, что был дан ответ
+
+        const buttons = document.querySelectorAll('.options button');
+        const selectedAnswer = buttons[selectedIndex].textContent;
+
+        if (selectedAnswer === correctAnswer) {
+            correctCount++;
+            showFeedback("Верно!", `Осталось групп: ${groups.length}`);
         } else {
-            showFeedback(false);
+            incorrectCount++;
+            showFeedback(`Неправильно! Правильный ответ: ${correctAnswer}`, `Осталось групп: ${groups.length}`);
         }
     }
 
-    function showFeedback(isCorrect) {
-        const feedbackModal = document.getElementById("feedbackModal");
-        const feedbackText = document.getElementById("feedback-text");
-        const remainingGroupsText = document.getElementById("remaining-groups");
-
-        const remainingGroups = groups.length;
-        feedbackText.textContent = isCorrect ? "Правильно!" : `Неверно! Правильный ответ: ${currentVocalist}`;
-        remainingGroupsText.textContent = `Осталось групп: ${remainingGroups}`;
-        feedbackModal.style.display = "block";
+    // Функция для показа обратной связи
+    function showFeedback(message, remaining) {
+        document.getElementById("feedback-text").textContent = message;
+        document.getElementById("remaining-groups").textContent = remaining;
+        document.getElementById("feedbackModal").style.display = "block";
     }
 
+    // Функция для закрытия модального окна обратной связи
     function closeFeedbackModal() {
-        const feedbackModal = document.getElementById("feedbackModal");
-        feedbackModal.style.display = "none";
+        document.getElementById("feedbackModal").style.display = "none";
         if (groups.length > 0) {
             askQuestion();
         } else {
@@ -383,31 +390,37 @@
         }
     }
 
+    // Функция для завершения игры
     function endQuiz() {
         const resultText = document.getElementById("result-text");
-        const correctAnswers = score;
-        const incorrectAnswers = questionsAsked - score;
-        const percentageCorrect = questionsAsked > 0 ? ((score / questionsAsked) * 100).toFixed(1) : 0;
+        const totalAnswers = correctCount + incorrectCount;
 
-        resultText.textContent = `Правильных ответов: ${correctAnswers}\nНеправильных ответов: ${incorrectAnswers}\nПроцент верных ответов: ${percentageCorrect}%`;
+        let percentageCorrect = 0.0;
+        if (totalAnswers > 0) {
+            percentageCorrect = ((correctCount / totalAnswers) * 100).toFixed(1);
+        }
+
+        resultText.textContent = `Правильных ответов: ${correctCount}\nНеправильных ответов: ${incorrectCount}\nПроцент верных ответов: ${percentageCorrect}%`;
         document.getElementById("resultModal").style.display = "block";
     }
 
+    // Функция для закрытия модального окна результатов
     function closeModal() {
-        const resultModal = document.getElementById("resultModal");
-        resultModal.style.display = "none";
+        document.getElementById("resultModal").style.display = "none";
         restartQuiz();
     }
 
+    // Функция для перезапуска игры
     function restartQuiz() {
-        score = 0;
-        questionsAsked = 0;
+        correctCount = 0;
+        incorrectCount = 0;
         groups = [...initialGroups];
         vocalists = [...initialVocalists];
         document.getElementById("resultModal").style.display = "none";
         askQuestion();
     }
 
+    // Функция для перехода к просмотру клипов
     function watchClip() {
         window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
     }
@@ -438,7 +451,7 @@
         }
     }
 
-    // Запуск викторины при загрузке страницы
+    // Начало игры при загрузке страницы
     startQuiz();
 </script>
 
