@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Угадай вокалиста</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #101010;
+            color: #f0f0f0;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333333;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        header img {
+            width: auto;
+            height: 100px;
+            margin: 10px;
+            border-radius: 10%;
+        }
+        h1 {
+            color: #FFD700;
+            margin: 20px 0;
+        }
+        .question {
+            color: #00BFFF;
+            font-size: 24px;
+            margin: 20px;
+        }
+        .question span {
+            font-weight: bold;
+        }
+        .options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px;
+        }
+        .options button {
+            background-color: #FFD700;
+            color: #101010;
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            min-width: 200px;
+            transition: background-color 0.3s;
+        }
+        .options button:hover {
+            background-color: #f0e130;
+        }
+        .end-btn {
+            background-color: #00BFFF;
+            color: #101010;
+            padding: 10px 30px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+            transition: background-color 0.3s;
+        }
+        .end-btn:hover {
+            background-color: #00a3e0;
+        }
+        /* Модальное окно для результатов */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.8); 
+        }
+        .modal-content {
+            background-color: #1a1a1a;
+            margin: 15% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+            max-width: 500px;
+            border-radius: 10px;
+            color: #f0f0f0;
+            position: relative;
+        }
+        .close {
+            color: #FFD700;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: #f0e130;
+            text-decoration: none;
+        }
+        /* Дополнительные стили для результатов */
+        #result-text {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        /* Модальное окно для обратной связи (правильно/неправильно) */
+        .feedback-modal {
+            display: none; 
+            position: fixed; 
+            z-index: 2; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0,0,0,0.8); 
+        }
+        .feedback-content {
+            background-color: #1a1a1a;
+            margin: 20% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 60%; 
+            max-width: 400px;
+            border-radius: 10px;
+            color: #f0f0f0;
+            position: relative;
+        }
+        .feedback-close {
+            color: #FFD700;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .feedback-close:hover,
+        .feedback-close:focus {
+            color: #f0e130;
+            text-decoration: none;
+        }
+        #feedback-text {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+        .feedback-ok-btn {
+            background-color: #00BFFF;
+            color: #101010;
+            padding: 10px 20px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+        .feedback-ok-btn:hover {
+            background-color: #00a3e0;
+        }
+        /* Стили для новой кнопки и текста */
+        .additional-options {
+            margin-top: 20px;
+        }
+        .additional-options p {
+            margin: 10px 0;
+            font-size: 18px;
+            color: #f0f0f0;
+        }
+        .additional-options button {
+            background-color: #00BFFF; /* Измененный голубой цвет */
+            color: #101010; /* Цвет текста, совпадающий с остальными кнопками */
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            min-width: 250px;
+            transition: background-color 0.3s;
+        }
+        .additional-options button:hover {
+            background-color: #00a3e0; /* Темно-голубой цвет при наведении */
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="John.jpg" alt="Johnny Rotten">
+    <img src="Morr.jpg" alt="Morrissey">
+    <img src="Smith.jpg" alt="Robert Smith">
+</header>
+
+<h1>Угадай вокалиста</h1>
+
+<div class="question">
+    Назовите вокалиста группы - <span id="group-name"></span>
+</div>
+
+<div class="options">
+    <button onclick="checkAnswer(0)" id="option-1">Option 1</button>
+    <button onclick="checkAnswer(1)" id="option-2">Option 2</button>
+    <button onclick="checkAnswer(2)" id="option-3">Option 3</button>
+    <button onclick="checkAnswer(3)" id="option-4">Option 4</button>
+</div>
+
+<button class="end-btn" onclick="endQuiz()">Завершить</button>
+
+<!-- Модальное окно для результатов -->
+<div id="resultModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Результаты игры</h2>
+        <p id="result-text"></p>
+        <button class="restart-btn" onclick="restartQuiz()">Играем еще раз?</button>
+        <div class="additional-options" style="display: none;">
+            <p>ИЛИ</p>
+            <button onclick="window.location.href='https://www.youtube.com/watch?v=dQw4w9WgXcQ';">Посмотри клип из этой подборки</button>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для обратной связи (правильно/неправильно) -->
+<div id="feedbackModal" class="modal feedback-modal">
+    <div class="feedback-content">
+        <span class="feedback-close" onclick="closeFeedbackModal()">&times;</span>
+        <p id="feedback-text"></p>
+        <button class="feedback-ok-btn" onclick="closeFeedbackModal()">OK</button>
+    </div>
+</div>
+
+<script>
+    const groups = [
+        "Sex Pistols", "The Clash", "The Ramones", "The Velvet Underground", "The Stooges", "Joy Division",
+        "The Smiths", "The Cure", "Talking Heads", "Bauhaus", "New Order", "The Fall", "Dead Kennedys", "Television",
+        "Buzzcocks", "Wire", "Patti Smith Group", "X-Ray Spex", "The Damned", "The Cramps", "Public Image Ltd",
+        "Gang of Four", "Hüsker Dü", "Depeche Mode", "Echo & the Bunnymen", "The Jesus and Mary Chain",
+        "The Replacements"
+    ];
+
+    const vocalists = [
+        "Johnny Rotten", "Joe Strummer", "Joey Ramone", "Lou Reed", "Iggy Pop", "Ian Curtis", "Morrissey",
+        "Robert Smith", "David Byrne", "Peter Murphy", "Bernard Sumner", "Mark E. Smith", "Jello Biafra",
+        "Tom Verlaine", "Pete Shelley", "Colin Newman", "Patti Smith", "Poly Styrene", "Dave Vanian",
+        "Lux Interior", "John Lydon", "Jon King", "Bob Mould", "Dave Gahan", "Ian McCulloch", "Jim Reid",
+        "Paul Westerberg"
+    ];
+
+    let correctCount = 0;
+    let incorrectCount = 0;
+    let remainingGroups = [...groups];
+    let totalAttempts = 0;
+    let currentGroup = "";
+    let correctAnswer = "";
+
+    // Функция для генерации нового вопроса
+    function randomizeQuestion() {
+        if (remainingGroups.length === 0) {
+            endQuiz();
+            return;
+        }
+
+        // Выбор случайной группы
+        const randomIndex = Math.floor(Math.random() * remainingGroups.length);
+        currentGroup = remainingGroups[randomIndex];
+        const groupGlobalIndex = groups.indexOf(currentGroup);
+        correctAnswer = vocalists[groupGlobalIndex];
+
+        document.getElementById('group-name').textContent = currentGroup;
+
+        // Генерация вариантов ответа
+        const options = [correctAnswer];
+        while (options.length < 4) {
+            const randomVocalist = vocalists[Math.floor(Math.random() * vocalists.length)];
+            if (!options.includes(randomVocalist)) {
+                options.push(randomVocalist);
+            }
+        }
+
+        // Перемешивание вариантов
+        options.sort(() => Math.random() - 0.5);
+
+        // Установка текста кнопок
+        for (let i = 0; i < 4; i++) {
+            document.getElementById(`option-${i+1}`).textContent = options[i];
+        }
+    }
+
+    // Функция для проверки ответа
+    function checkAnswer(selectedIndex) {
+        if (remainingGroups.length === 0) {
+            endQuiz();
+            return;
+        }
+
+        const selectedAnswer = document.getElementById(`option-${selectedIndex + 1}`).textContent;
+        totalAttempts++;
+
+        let message = "";
+        if (selectedAnswer === correctAnswer) {
+            correctCount++;
+            message = `Верно!<br>Осталось групп: ${remainingGroups.length - 1}`;
+        } else {
+            incorrectCount++;
+            message = `Неверно!<br>Правильный ответ: ${correctAnswer}<br>Осталось групп: ${remainingGroups.length - 1}`;
+        }
+
+        // Показываем сообщение в модальном окне
+        showFeedback(message);
+
+        // Удаление использованной группы
+        remainingGroups.splice(remainingGroups.indexOf(currentGroup), 1);
+    }
+
+    // Функция для показа модального окна с сообщением
+    function showFeedback(message) {
+        document.getElementById('feedback-text').innerHTML = message;
+        document.getElementById('feedbackModal').style.display = "block";
+    }
+
+    // Функция для закрытия модального окна с сообщением
+    function closeFeedbackModal() {
+        document.getElementById('feedbackModal').style.display = "none";
+        // Генерируем следующий вопрос, если еще есть группы
+        if (remainingGroups.length > 0) {
+            randomizeQuestion();
+        } else {
+            endQuiz();
+        }
+    }
+
+    // Функция для завершения викторины
+    function endQuiz() {
+        // Вычисление процента верных ответов
+        const percentage = totalAttempts > 0 ? ((correctCount / totalAttempts) * 100).toFixed(1) : 0;
+
+        // Формирование текста результатов
+        const resultText = `
+            Правильных ответов: ${correctCount}<br>
+            Неправильных ответов: ${incorrectCount}<br>
+            Процент верных ответов: ${percentage}%
+        `;
+
+        document.getElementById('result-text').innerHTML = resultText;
+
+        // Показать модальное окно с результатами
+        document.getElementById('resultModal').style.display = "block";
+
+        // Показать кнопку "Играем еще раз?"
+        document.querySelector('.restart-btn').style.display = "inline-block";
+
+        // Показать дополнительный блок с текстом "ИЛИ" и новой кнопкой
+        document.querySelector('.additional-options').style.display = "block";
+
+        // Отключить кнопки вариантов ответов и кнопку "Завершить"
+        disableButtons();
+    }
+
+    // Функция для закрытия модального окна результатов
+    function closeModal() {
+        document.getElementById('resultModal').style.display = "none";
+    }
+
+    // Функция для перезапуска викторины
+    function restartQuiz() {
+        // Сброс счетчиков
+        correctCount = 0;
+        incorrectCount = 0;
+        totalAttempts = 0;
+        remainingGroups = [...groups];
+        currentGroup = "";
+        correctAnswer = "";
+
+        // Скрыть кнопку "Играем еще раз?"
+        document.querySelector('.restart-btn').style.display = "none";
+
+        // Скрыть дополнительный блок с текстом "ИЛИ" и новой кнопкой
+        document.querySelector('.additional-options').style.display = "none";
+
+        // Скрыть модальное окно результатов
+        closeModal();
+
+        // Скрыть модальное окно с обратной связью (на случай)
+        closeFeedbackModal();
+
+        // Включить кнопки вариантов ответов и кнопку "Завершить"
+        enableButtons();
+
+        // Генерация первого вопроса
+        randomizeQuestion();
+    }
+
+    // Функция для отключения кнопок
+    function disableButtons() {
+        for (let i = 1; i <= 4; i++) {
+            document.getElementById(`option-${i}`).disabled = true;
+        }
+        document.querySelector('.end-btn').disabled = true;
+    }
+
+    // Функция для включения кнопок
+    function enableButtons() {
+        for (let i = 1; i <= 4; i++) {
+            document.getElementById(`option-${i}`).disabled = false;
+        }
+        document.querySelector('.end-btn').disabled = false;
+    }
+
+    // Закрытие модальных окон при клике вне их
+    window.onclick = function(event) {
+        const resultModal = document.getElementById('resultModal');
+        const feedbackModal = document.getElementById('feedbackModal');
+        if (event.target == resultModal) {
+            resultModal.style.display = "none";
+        }
+        if (event.target == feedbackModal) {
+            feedbackModal.style.display = "none";
+            if (remainingGroups.length > 0) {
+                randomizeQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+    }
+
+    // Генерация первого вопроса при загрузке страницы
+    window.onload = randomizeQuestion;
+</script>
+
+</body>
+</html>
