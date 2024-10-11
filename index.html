@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -17,12 +18,12 @@
             background-color: #333333;
             padding: 10px;
             display: flex;
-            justify-content: center; /* Центрирование изображений */
+            justify-content: center;
             align-items: center;
-            gap: 20px; /* Уменьшенное расстояние между картинками */
+            gap: 20px;
         }
         header img {
-            height: 100px; /* Увеличение изображений */
+            height: 100px;
             border-radius: 10%;
         }
         h1 {
@@ -78,26 +79,27 @@
         }
         /* Модальное окно для результатов */
         .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1; 
+            display: none;
+            position: fixed;
+            z-index: 1;
             left: 0;
             top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.8); 
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
         }
         .modal-content {
             background-color: #1a1a1a;
-            margin: 10% auto; 
-            padding: 20px;
+            margin: 10% auto;
+            padding: 30px 20px;
             border: 1px solid #888;
-            width: 80%; 
+            width: 80%;
             max-width: 400px;
             border-radius: 10px;
             color: #f0f0f0;
             position: relative;
+            text-align: center;
         }
         .close {
             color: #FFD700;
@@ -116,29 +118,31 @@
         #result-text {
             font-size: 1.2em;
             margin-top: 20px;
+            white-space: pre-line;
         }
-        /* Модальное окно обратной связи (правильно/неправильно) */
+        /* Модальное окно обратной связи */
         .feedback-modal {
-            display: none; 
-            position: fixed; 
-            z-index: 2; 
+            display: none;
+            position: fixed;
+            z-index: 2;
             left: 0;
             top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0,0,0,0.8); 
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
         }
         .feedback-content {
             background-color: #1a1a1a;
-            margin: 15% auto; 
-            padding: 15px;
+            margin: 10% auto;
+            padding: 25px 20px;
             border: 1px solid #888;
-            width: 75%; 
+            width: 75%;
             max-width: 350px;
             border-radius: 10px;
             color: #f0f0f0;
             position: relative;
+            text-align: center;
         }
         .feedback-close {
             color: #FFD700;
@@ -157,29 +161,62 @@
         .feedback-ok-btn {
             background-color: #00BFFF;
             color: #101010;
-            padding: 8px 15px; /* Уменьшил размер кнопки */
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 1em;
             transition: background-color 0.3s;
-            width: 80%; /* Уменьшена ширина кнопки OK */
+            width: 60%;
+            margin: 20px auto 0;
+            display: block;
         }
         .feedback-ok-btn:hover {
             background-color: #00a3e0;
+        }
+        /* Кнопка "Посмотри клип" */
+        .watch-clip-btn {
+            background-color: #00BFFF;
+            color: #101010;
+            padding: 15px 30px;
+            margin: 10px auto;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+            display: block;
+        }
+        .watch-clip-btn:hover {
+            background-color: #00a3e0;
+        }
+        /* Уменьшена высота кнопки "Играем еще раз" */
+        .restart-btn {
+            padding: 10px 30px;
+            margin-top: 10px;
+            cursor: pointer;
+            background-color: #FFD700;
+            color: #101010;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+        .restart-btn:hover {
+            background-color: #f0e130;
         }
         @media (max-width: 600px) {
             header {
                 flex-direction: row;
             }
             header img {
-                height: 80px; /* Уменьшена высота для мобильных */
+                height: 80px;
             }
             .options button {
                 font-size: 0.9em;
                 padding: 10px 20px;
                 min-width: 140px;
-                flex: 1 1 45%; /* Две кнопки в строке */
+                flex: 1 1 45%;
             }
             .modal-content, .feedback-content {
                 width: 90%;
@@ -218,8 +255,8 @@
         <h2>Результаты игры</h2>
         <p id="result-text"></p>
         <button class="restart-btn" onclick="restartQuiz()">Играем еще раз?</button>
-        <p>ИЛИ</p> <!-- Добавлен текст "ИЛИ" -->
-        <button class="watch-clip-btn" onclick="watchClip()">Посмотри клип из этой подборки</button> <!-- Кнопка для перехода на клип -->
+        <p>ИЛИ</p>
+        <button class="watch-clip-btn" onclick="watchClip()">Посмотри клип из этой подборки</button>
     </div>
 </div>
 
@@ -228,89 +265,183 @@
     <div class="feedback-content">
         <span class="feedback-close" onclick="closeFeedbackModal()">&times;</span>
         <p id="feedback-text"></p>
+        <p id="remaining-groups" style="margin-top: 10px; text-align: center;"></p>
         <button class="feedback-ok-btn" onclick="closeFeedbackModal()">OK</button>
     </div>
 </div>
 
 <script>
-    const groups = ["The Clash", "The Cure", "The Smiths", "Sex Pistols"];
-    const vocalists = ["Joe Strummer", "Robert Smith", "Morrissey", "Johnny Rotten"];
-    let correctAnswer = "";
-    let currentGroup = "";
-    let remainingGroups = [...groups];
-    let correctCount = 0;
-    let incorrectCount = 0;
-    let totalAttempts = 0;
+    // Исходные списки групп и вокалистов
+    const initialGroups = [
+        "Sex Pistols", "The Clash", "The Ramones", "The Velvet Underground", "The Stooges", "Joy Division",
+        "The Smiths", "The Cure", "Talking Heads", "Bauhaus", "New Order", "The Fall", "Dead Kennedys", "Television",
+        "Buzzcocks", "Wire", "Patti Smith Group", "X-Ray Spex", "The Damned", "The Cramps", "Public Image Ltd",
+        "Gang of Four", "Hüsker Dü", "Depeche Mode", "Echo & the Bunnymen", "The Jesus and Mary Chain",
+        "The Replacements"
+    ];
 
-    function randomizeQuestion() {
-        if (remainingGroups.length === 0) {
+    const initialVocalists = [
+        "Johnny Rotten", "Joe Strummer", "Joey Ramone", "Lou Reed", "Iggy Pop", "Ian Curtis", "Morrissey",
+        "Robert Smith",
+        "David Byrne", "Peter Murphy",
+        "Bernard Sumner", "Mark E. Smith", "Jello Biafra", "Tom Verlaine", "Pete Shelley", "Colin Newman",
+        "Patti Smith",
+        "Poly Styrene", "Dave Vanian",
+        "Lux Interior", "John Lydon", "Jon King", "Bob Mould", "Dave Gahan", "Ian McCulloch", "Jim Reid",
+        "Paul Westerberg"
+    ];
+
+    // Копируем исходные списки для использования в игре
+    let groups = [...initialGroups];
+    let vocalists = [...initialVocalists];
+
+    let currentGroupIndex;
+    let correctAnswerIndex;
+    let currentVocalist;
+    let score = 0;
+    let questionsAsked = 0;
+
+    function startQuiz() {
+        score = 0;
+        questionsAsked = 0;
+        groups = [...initialGroups];
+        vocalists = [...initialVocalists];
+        askQuestion();
+    }
+
+    function askQuestion() {
+        if (groups.length === 0) {
             endQuiz();
             return;
         }
 
-        const randomIndex = Math.floor(Math.random() * remainingGroups.length);
-        currentGroup = remainingGroups[randomIndex];
-        correctAnswer = vocalists[groups.indexOf(currentGroup)];
+        currentGroupIndex = Math.floor(Math.random() * groups.length);
+        const currentGroup = groups[currentGroupIndex];
+        currentVocalist = vocalists[currentGroupIndex];
 
         document.getElementById("group-name").textContent = currentGroup;
 
-        const options = [correctAnswer, ...vocalists.filter(v => v !== correctAnswer).sort(() => 0.5 - Math.random()).slice(0, 3)];
-        options.sort(() => 0.5 - Math.random());
+        correctAnswerIndex = Math.floor(Math.random() * 4);
+        const answers = [];
 
-        options.forEach((option, index) => {
-            document.getElementById(`option-${index + 1}`).textContent = option;
-        });
-    }
+        // Получаем все возможные неправильные ответы
+        const wrongAnswers = vocalists.filter(v => v !== currentVocalist);
+        shuffleArray(wrongAnswers);
 
-    function checkAnswer(index) {
-        totalAttempts++;
-        const chosenAnswer = document.getElementById(`option-${index + 1}`).textContent;
-
-        if (chosenAnswer === correctAnswer) {
-            correctCount++;
-            showFeedback(`Верно! Осталось групп: ${remainingGroups.length - 1}`);
-        } else {
-            incorrectCount++;
-            showFeedback(`Неверно! Правильный ответ: ${correctAnswer}. Осталось групп: ${remainingGroups.length - 1}`);
+        for (let i = 0; i < 4; i++) {
+            if (i === correctAnswerIndex) {
+                answers.push(currentVocalist);
+            } else {
+                if (wrongAnswers.length > 0) {
+                    answers.push(wrongAnswers.pop());
+                } else {
+                    // Если недостаточно неправильных ответов, повторяем текущий вокалист
+                    answers.push(currentVocalist);
+                }
+            }
         }
 
-        remainingGroups = remainingGroups.filter(g => g !== currentGroup);
-        setTimeout(randomizeQuestion, 1500);
+        // Устанавливаем варианты ответов на кнопки
+        for (let i = 0; i < 4; i++) {
+            document.getElementById(`option-${i+1}`).textContent = answers[i];
+        }
+
+        // Удаляем использованную группу и вокалиста из списков
+        groups.splice(currentGroupIndex, 1);
+        vocalists.splice(currentGroupIndex, 1);
+
+        questionsAsked++;
     }
 
-    function showFeedback(message) {
-        document.getElementById("feedback-text").textContent = message;
-        document.getElementById("feedbackModal").style.display = "block";
+    function checkAnswer(selectedIndex) {
+        if (selectedIndex === correctAnswerIndex) {
+            score++;
+            showFeedback(true);
+        } else {
+            showFeedback(false);
+        }
+    }
+
+    function showFeedback(isCorrect) {
+        const feedbackModal = document.getElementById("feedbackModal");
+        const feedbackText = document.getElementById("feedback-text");
+        const remainingGroupsText = document.getElementById("remaining-groups");
+
+        const remainingGroups = groups.length;
+        feedbackText.textContent = isCorrect ? "Правильно!" : `Неверно! Правильный ответ: ${currentVocalist}`;
+        remainingGroupsText.textContent = `Осталось групп: ${remainingGroups}`;
+        feedbackModal.style.display = "block";
     }
 
     function closeFeedbackModal() {
-        document.getElementById("feedbackModal").style.display = "none";
+        const feedbackModal = document.getElementById("feedbackModal");
+        feedbackModal.style.display = "none";
+        if (groups.length > 0) {
+            askQuestion();
+        } else {
+            endQuiz();
+        }
     }
 
     function endQuiz() {
-        document.getElementById("result-text").textContent = `Правильных ответов: ${correctCount}, Неправильных ответов: ${incorrectCount}, Всего попыток: ${totalAttempts}`;
+        const resultText = document.getElementById("result-text");
+        const correctAnswers = score;
+        const incorrectAnswers = questionsAsked - score;
+        const percentageCorrect = questionsAsked > 0 ? ((score / questionsAsked) * 100).toFixed(1) : 0;
+
+        resultText.textContent = `Правильных ответов: ${correctAnswers}\nНеправильных ответов: ${incorrectAnswers}\nПроцент верных ответов: ${percentageCorrect}%`;
         document.getElementById("resultModal").style.display = "block";
     }
 
     function closeModal() {
-        document.getElementById("resultModal").style.display = "none";
+        const resultModal = document.getElementById("resultModal");
+        resultModal.style.display = "none";
         restartQuiz();
     }
 
     function restartQuiz() {
-        remainingGroups = [...groups];
-        correctCount = 0;
-        incorrectCount = 0;
-        totalAttempts = 0;
-        randomizeQuestion();
+        score = 0;
+        questionsAsked = 0;
+        groups = [...initialGroups];
+        vocalists = [...initialVocalists];
+        document.getElementById("resultModal").style.display = "none";
+        askQuestion();
     }
 
     function watchClip() {
-        window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "_blank");
+        window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
     }
 
-    randomizeQuestion();
+    // Функция для перемешивания массива (Фишер-Йетс)
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    // Закрытие модальных окон при клике вне их содержимого
+    window.onclick = function(event) {
+        const resultModal = document.getElementById("resultModal");
+        const feedbackModal = document.getElementById("feedbackModal");
+        if (event.target == resultModal) {
+            resultModal.style.display = "none";
+            restartQuiz();
+        }
+        if (event.target == feedbackModal) {
+            feedbackModal.style.display = "none";
+            if (groups.length > 0) {
+                askQuestion();
+            } else {
+                endQuiz();
+            }
+        }
+    }
+
+    // Запуск викторины при загрузке страницы
+    startQuiz();
 </script>
 
 </body>
 </html>
+
