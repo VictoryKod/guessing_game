@@ -19,20 +19,24 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-wrap: wrap; /* Позволяет изображениям переноситься на новую строку */
         }
         header img {
             width: auto;
-            height: 100px;
+            height: 80px; /* Уменьшение высоты для мобильных устройств */
             margin: 10px;
             border-radius: 10%;
+            max-width: 100%; /* Обеспечивает, что изображения не превышают ширину контейнера */
+            height: auto; /* Автоматическая высота для сохранения пропорций */
         }
         h1 {
             color: #FFD700;
             margin: 20px 0;
+            font-size: 2em;
         }
         .question {
             color: #00BFFF;
-            font-size: 24px;
+            font-size: 1.5em;
             margin: 20px;
         }
         .question span {
@@ -52,8 +56,10 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 18px;
-            min-width: 200px;
+            font-size: 1em;
+            min-width: 150px; /* Уменьшение минимальной ширины для мобильных */
+            flex: 1 1 40%; /* Позволяет кнопкам занимать до 40% ширины контейнера */
+            max-width: 300px; /* Ограничение максимальной ширины кнопок */
             transition: background-color 0.3s;
         }
         .options button:hover {
@@ -63,12 +69,13 @@
             background-color: #00BFFF;
             color: #101010;
             padding: 10px 30px;
-            margin-top: 20px;
+            margin: 20px auto;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 1.2em;
             transition: background-color 0.3s;
+            display: block;
         }
         .end-btn:hover {
             background-color: #00a3e0;
@@ -87,10 +94,10 @@
         }
         .modal-content {
             background-color: #1a1a1a;
-            margin: 15% auto; 
+            margin: 10% auto; /* Уменьшение отступа сверху для мобильных */
             padding: 20px;
             border: 1px solid #888;
-            width: 80%; 
+            width: 90%; 
             max-width: 500px;
             border-radius: 10px;
             color: #f0f0f0;
@@ -112,7 +119,7 @@
         }
         /* Дополнительные стили для результатов */
         #result-text {
-            font-size: 20px;
+            font-size: 1.2em;
             margin-top: 20px;
         }
         /* Модальное окно для обратной связи (правильно/неправильно) */
@@ -129,10 +136,10 @@
         }
         .feedback-content {
             background-color: #1a1a1a;
-            margin: 20% auto; 
+            margin: 15% auto; /* Уменьшение отступа сверху для мобильных */
             padding: 20px;
             border: 1px solid #888;
-            width: 60%; 
+            width: 85%; 
             max-width: 400px;
             border-radius: 10px;
             color: #f0f0f0;
@@ -153,7 +160,7 @@
             text-decoration: none;
         }
         #feedback-text {
-            font-size: 18px;
+            font-size: 1em;
             margin-top: 20px;
         }
         .feedback-ok-btn {
@@ -164,8 +171,9 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 1em;
             transition: background-color 0.3s;
+            width: 100%;
         }
         .feedback-ok-btn:hover {
             background-color: #00a3e0;
@@ -176,23 +184,62 @@
         }
         .additional-options p {
             margin: 10px 0;
-            font-size: 18px;
+            font-size: 1em;
             color: #f0f0f0;
         }
         .additional-options button {
-            background-color: #00BFFF; /* Измененный голубой цвет */
-            color: #101010; /* Цвет текста, совпадающий с остальными кнопками */
+            background-color: #00BFFF; /* Голубой цвет */
+            color: #101010; /* Цвет текста */
             padding: 10px 20px;
             margin: 5px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 18px;
-            min-width: 250px;
+            font-size: 1em;
+            min-width: 200px; /* Уменьшение минимальной ширины для мобильных */
+            width: 80%; /* Занимает 80% ширины контейнера */
+            max-width: 250px;
             transition: background-color 0.3s;
         }
         .additional-options button:hover {
             background-color: #00a3e0; /* Темно-голубой цвет при наведении */
+        }
+        /* Медиазапросы для мобильных устройств */
+        @media (max-width: 600px) {
+            header {
+                flex-direction: column; /* Стекать изображения вертикально */
+            }
+            header img {
+                height: 60px; /* Уменьшение высоты изображений на мобильных */
+                margin: 5px 0;
+            }
+            h1 {
+                font-size: 1.8em;
+                margin: 15px 0;
+            }
+            .question {
+                font-size: 1.2em;
+                margin: 15px;
+            }
+            .options button {
+                font-size: 1em;
+                min-width: 150px;
+                flex: 1 1 80%;
+            }
+            .end-btn {
+                font-size: 1em;
+                padding: 10px 20px;
+            }
+            .modal-content, .feedback-content {
+                margin: 20% auto; /* Увеличение отступа сверху для удобства */
+                width: 95%;
+            }
+            .additional-options button {
+                font-size: 1em;
+                min-width: 200px;
+                width: 90%;
+                max-width: none;
+            }
         }
     </style>
 </head>
